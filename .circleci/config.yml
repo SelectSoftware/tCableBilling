@@ -6,9 +6,12 @@ jobs:
     steps:
       - checkout
       - run:
+          name: List files in the current directory
+          command: ls -la
+      - run:
           name: Ensure composer.lock exists
           command: |
-            if [ ! -f ./composer.lock ]; then
+            if [ ! -f composer.lock ]; then
               echo "composer.lock not found! Exiting."
               exit 1
             fi
