@@ -8,7 +8,7 @@ jobs:
       - run:
           name: Ensure composer.lock exists
           command: |
-            if [ ! -f ~/project/composer.lock ]; then
+            if [ ! -f ./composer.lock ]; then
               echo "composer.lock not found! Exiting."
               exit 1
             fi
