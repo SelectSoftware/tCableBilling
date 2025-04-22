@@ -1,32 +1,30 @@
-# This config was automatically generated from your source code
-# Stacks detected: deps:node:.,deps:php:.
 version: 2.1
-orbs:
-  php: circleci/php@1
 jobs:
-  test-php:
-    # Install php packages and run tests
+  build:
     docker:
-      - image: cimg/php:8.2.7-node
+      - image: cimg/php:8.0
     steps:
       - checkout
-      - php/install-packages
       - run:
-          name: run tests
-          command: ./vendor/bin/phpunit
-  deploy:
-    # This is an example deploy job, not actually used by the workflow
-    docker:
-      - image: cimg/base:stable
-    steps:
-      # Replace this with steps to deploy to users
+          name: Ensure composer.lock exists
+          command: |
+            if [ ! -f composer.lock ]; then
+              echo "composer.lock not found! Exiting."
+              exit 1
+            fi
+      - restore_cache:
+          keys:
+            - composer-cache-{{ checksum "composer.lock" }}
+            - composer-cache-
       - run:
-          name: deploy
-          command: '#e.g. ./deploy.sh'
+          name: Install dependencies
+          command: composer install --prefer-dist --no-interaction
+      - save_cache:
+          paths:
+            - ~/.composer/cache
+          key: composer-cache-{{ checksum "composer.lock" }}
 workflows:
-  build-and-test:
+  version: 2
+  build_and_test:
     jobs:
-      - test-php
-    # - deploy:
-    #     requires:
-    #       - test-php
+      - build
